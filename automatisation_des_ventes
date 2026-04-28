@@ -1,0 +1,60 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 1. Génération du fichier ventes.csv (Données fictives) [cite: 12]
+data = {
+    'ID': [101, 102, 103, 104, 105],
+    'Prix': [15.0, 25.0, 10.0, 50.0, 30.0],
+    'Quantite': [3, 2, 5, 1, 4],
+    'Remise': [10, 5, 0, 15, 20] # en pourcentage 
+}
+df = pd.DataFrame(data)
+df.to_csv('ventes.csv', index=False)
+
+# --- DEBUT DU TRAITEMENT ---
+
+# Lecture dynamique du fichier [cite: 27]
+df_ventes = pd.read_csv('ventes.csv')
+
+# 2. Calcul du Chiffre d'Affaires (CA) Brut 
+df_ventes['CA_Brut'] = df_ventes['Prix'] * df_ventes['Quantite']
+
+# 3. Application des remises pour obtenir le CA Net 
+# Formule : CA Brut * (1 - Remise/100)
+df_ventes['CA_Net'] = df_ventes['CA_Brut'] * (1 - df_ventes['Remise'] / 100)
+
+# 4. Calcul de la TVA (20%) sur le CA Net 
+df_ventes['TVA'] = df_ventes['CA_Net'] * 0.20
+
+# 5. Calcul du CA Total de l'entreprise [cite: 21]
+ca_total = df_ventes['CA_Net'].sum()
+print(f"Le Chiffre d'Affaires Total de l'entreprise est : {ca_total:.2f} DT")
+
+# 6. Identification du produit avec le plus gros bénéfice (CA Net) [cite: 22]
+id_max = df_ventes.loc[df_ventes['CA_Net'].idxmax(), 'ID']
+print(f"Le produit ayant généré le plus gros bénéfice est l'ID : {id_max}")
+
+# 7. Exportation des résultats 
+df_ventes.to_csv('resultats_final.csv', index=False)
+print("Fichier 'resultats_final.csv' généré avec succès.")
+
+# --- PARTIE GRAPHIQUE (BONUS) [cite: 25, 26] ---
+
+# Création d'une figure avec deux sous-graphiques (subplots)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+fig.suptitle('Analyse des Ventes - Rapport Annuel', fontsize=16)
+
+# Graphique 1 : CA Net par Produit (Barres)
+couleurs = ['skyblue', 'salmon', 'lightgreen', 'orange', 'orchid']
+ax1.bar(df_ventes['ID'].astype(str), df_ventes['CA_Net'], color=couleurs)
+ax1.set_title('Chiffre d\'Affaires Net par Produit')
+ax1.set_xlabel('ID Produit')
+ax1.set_ylabel('CA Net (DT)')
+ax1.grid(axis='y', linestyle='--', alpha=0.7)
+
+# Graphique 2 : Répartition des quantités vendues (Camembert)
+ax2.pie(df_ventes['Quantite'], labels=df_ventes['ID'], autopct='%1.1f%%', startangle=140, colors=couleurs)
+ax2.set_title('Répartition des Quantités Vendues')
+
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+plt.show()
