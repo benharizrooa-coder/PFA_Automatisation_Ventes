@@ -10,9 +10,6 @@ L'objectif est d'aider une entreprise de e-commerce à automatiser son suivi des
 ## 👥 Équipe du Projet
 Ce travail a été réalisé par :
 *   🌟 *Roua Ben Hariz*
-*   🌟 *Meriem Gaaloul*
-*   🌟 *Dorra Ben Amor*
-
 ---
 
 ## 🛠️ Fonctionnalités du Script
